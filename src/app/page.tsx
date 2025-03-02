@@ -11,6 +11,7 @@ export default async function Home() {
       </main>
     )
   }
+  console.log(process.env.AUTH0_DOMAIN)
   console.log(session.user)
   return (
     <main>
