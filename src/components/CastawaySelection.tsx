@@ -45,7 +45,6 @@ export default function CastawaySelection() {
 
   return (
     <div className="max-w-md mx-auto space-y-4">
-      <p className="text-red-500">If this is red, Tailwind is working</p>
       <h2 className="text-lg font-semibold text-center">Select a Castaway</h2>
       <Separator />
       {loading ? (
