@@ -1,35 +1,32 @@
-import { auth0 } from "@/lib/auth0"
-import axios from 'axios';
-
-const url = 'https://x3araf0ma6.execute-api.us-east-2.amazonaws.com/prod/castaways';
-
-const postData = async () => {
-    try {
-        const response = await axios.post(url, { /* Add your request body here if needed */ });
-        console.log(response.data);
-    } catch (e: any) {
-        console.error('Error:', e.response ? e.response.data : e.message);
-    }
-};
+import { auth0 } from "@/lib/auth0";
+import CastawaySelection from "@/components/CastawaySelection";
+import { Button } from "@/components/ui/button";
 
 export default async function Home() {
-  await postData()
-  const session = await auth0.getSession()
-  
+  const session = await auth0.getSession();
+
   if (!session) {
     return (
-      <main>
-        <a href="/auth/login?screen_hint=signup">Sign up</a>
-        <a href="/auth/login">Log in</a>
+      <main className="flex flex-col items-center justify-center min-h-screen space-y-4">
+        <h1 className="text-2xl font-bold">Fantasy Survivor</h1>
+        <p className="text-gray-500">Log in to start selecting your castaways!</p>
+        <a href="/auth/login?screen_hint=signup">
+          <Button>Sign Up</Button>
+        </a>
+        <a href="/auth/login">
+          <Button variant="outline">Log In</Button>
+        </a>
       </main>
-    )
+    );
   }
-  console.log(process.env.AUTH0_DOMAIN)
-  console.log(session.user)
+
   return (
-    <main>
-      <h1>Welcome, {session.user.name}!</h1>
-      <a href="/auth/logout">Log out</a>
+    <main className="flex flex-col items-center justify-center min-h-screen space-y-6">
+      <h1 className="text-xl font-bold">Welcome, {session.user.name}!</h1>
+      <CastawaySelection />
+      <a href="/auth/logout">
+        <Button variant="destructive">Log Out</Button>
+      </a>
     </main>
-  )
+  );
 }
