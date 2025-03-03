@@ -5,19 +5,19 @@ const API_GATEWAY_BASE_URL = "https://x3araf0ma6.execute-api.us-east-2.amazonaws
 
 export async function POST(req: Request) {
   try {
-    const accessToken = await auth0.getAccessToken()
     const { path, body } = await req.json(); // Extract API path & request body
 
     if (!path) {
       return NextResponse.json({ error: "Missing API path" }, { status: 400 });
     }
 
+    const accessToken = await auth0.getAccessToken()
     const response = await fetch(`${API_GATEWAY_BASE_URL}/${path}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-api-key": process.env.API_GW_KEY as string, // Securely use API key
-        "Authorization": `Bearer ${accessToken}`,
+        "Authorization": `Bearer ${accessToken.token}`,
       },
       body: JSON.stringify(body || {}), // Ensure a valid request body
     });
