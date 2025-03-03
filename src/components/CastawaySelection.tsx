@@ -24,9 +24,10 @@ export default function CastawaySelection() {
   useEffect(() => {
     const fetchCastaways = async () => {
       try {
-        const response = await axios.post(
-          "https://x3araf0ma6.execute-api.us-east-2.amazonaws.com/prod/castaways"
-        );
+        const response = await axios.post("/api/proxy", {
+          path: "castaways", // Dynamic API path
+          body: { /* Optional request body */ }
+        });
         setCastaways(response.data);
       } catch (error) {
         console.error("Error fetching castaways:", error);
