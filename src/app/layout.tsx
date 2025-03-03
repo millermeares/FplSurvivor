@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   description: "Pick your favorite castaways and compete with friends!",
 };
 
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">

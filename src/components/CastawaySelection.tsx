@@ -20,6 +20,7 @@ export default function CastawaySelection() {
   useEffect(() => {
     const fetchCastaways = async () => {
       try {
+        console.log("fetching castaways")
         const response = await axios.post("/api/proxy", {
           path: "castaways",
         });
