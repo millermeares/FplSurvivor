@@ -11,13 +11,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing API path" }, { status: 400 });
     }
 
-    const accessToken = await auth0.getAccessToken()
+    const session = await auth0.getSession()
+    if (!session || !session.tokenSet.accessToken) {
+      return NextResponse.json({error: "Missing logged in user"}, { status: 401 })
+    }
+    const accessToken = session.tokenSet.accessToken
     const response = await fetch(`${API_GATEWAY_BASE_URL}/${path}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-api-key": process.env.API_GW_KEY as string, // Securely use API key
-        "Authorization": `Bearer ${accessToken.token}`,
+        "Authorization": `Bearer ${accessToken}`,
       },
       body: JSON.stringify(body || {}), // Ensure a valid request body
     });
