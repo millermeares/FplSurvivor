@@ -12,6 +12,11 @@ interface CastawaySelectionRowProps {
   onSelect?: (id: string) => void; // Make optional to handle disabled state
 }
 
+// Function to generate filename-friendly ID
+const generateImageName = (name: string) => 
+  name.toLowerCase().replace(/\s+/g, "_"); // Convert to lowercase and replace spaces with underscores
+
+
 export default function CastawaySelectionRow({
   id,
   name,
@@ -19,6 +24,7 @@ export default function CastawaySelectionRow({
   isSelected,
   onSelect,
 }: CastawaySelectionRowProps) {
+  const localImagePath = `/images/castaways/${generateImageName(name)}.jpg`;
   return (
     <Card
       key={id}
@@ -31,11 +37,14 @@ export default function CastawaySelectionRow({
     >
       <div className="flex items-center w-full">
         <Avatar className="w-8 h-8 rounded-full overflow-hidden">
-          {imageUrl ? (
-            <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
-          ) : (
-            <span className="text-gray-500 text-sm">🏝️</span>
-          )}
+          <img
+            src={imageUrl || localImagePath}
+            alt={name}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = "/images/castaways/default.jpg"; // Fallback image
+            }}
+          />
         </Avatar>
         <p className="text-sm font-medium ml-3 whitespace-nowrap">{name}</p>
       </div>
