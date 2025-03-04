@@ -13,6 +13,21 @@ interface Castaway {
   image_url: string | null;
 }
 
+interface CastawayWithSelection extends Castaway {
+  _fk_week_eliminated: number | null;
+  selection_id: string | null;
+  is_captain: boolean | null;
+  created_at: string | null;
+  removed_at: string | null;
+}
+
+function getSelectedCastawayIds(castaways: CastawayWithSelection[]): string[] {
+  return castaways
+    .filter(castaway => castaway.selection_id !== null) // Keep only selected castaways
+    .map(castaway => castaway.id); // Extract their IDs
+}
+
+
 export default function CastawaySelection() {
   const [castaways, setCastaways] = useState<Castaway[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
@@ -23,9 +38,15 @@ export default function CastawaySelection() {
     const fetchCastaways = async () => {
       try {
         const response = await axios.post("/api/proxy", {
-          path: "castaways",
+          path: "castawaysWithSelections", 
+          body: {
+            week: WEEK_ID
+          }
         });
+        console.log(response)
+        const selectedCastaways = getSelectedCastawayIds(response.data)
         setCastaways(response.data);
+        setSelected(selectedCastaways[0])
       } catch (error) {
         console.error("Error fetching castaways:", error);
       } finally {
