@@ -15,6 +15,10 @@ export default function Home() {
     }
   }, [user, router]);
 
+  if (user) {
+    return <div> Loading...</div>
+  }
+
   return (
     <main className="flex flex-col items-center justify-center min-h-screen space-y-4">
       <h1 className="text-2xl font-bold">Fantasy Survivor</h1>
