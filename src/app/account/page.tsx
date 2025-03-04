@@ -6,7 +6,7 @@ import ProtectedPage from "@/components/ProtectedPage";
 
 export default function AccountPage() {
   const { user } = useUser();
-
+  console.log(user)
   return (
     <ProtectedPage>
       <div className="text-center">
