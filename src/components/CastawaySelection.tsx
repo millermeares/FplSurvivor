@@ -11,7 +11,6 @@ interface Castaway {
   name: string;
   image_url: string | null;
 }
-
 export default function CastawaySelection() {
   const [castaways, setCastaways] = useState<Castaway[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
@@ -34,6 +33,31 @@ export default function CastawaySelection() {
     fetchCastaways();
   }, []);
 
+
+  // todo: test what happens when you click a bunch of stuff rapidly. 
+  const onSelect = (id: string) => {
+    const setSelectionInDb = async () => {
+      try {
+        const response = await axios.post("/api/proxy", {
+          path: "setSelections",
+          body: {
+            week: 2,
+            castaways: [{
+              castawayId: id,
+              isCaptain: false
+            }]
+          }
+        })
+        console.log(response)
+        // todo: if successful, set the color of the selected row to green?
+      } catch (error) {
+        console.error("Error setting castaway", error) // todo: handle
+      } 
+    }
+    setSelectionInDb()
+    setSelected(id)
+  }
+
   return (
     <ProtectedPage>
       <div className="max-w-md mx-auto space-y-2">
@@ -53,7 +77,7 @@ export default function CastawaySelection() {
                 name={castaway.name}
                 imageUrl={castaway.image_url}
                 isSelected={selected === castaway.id}
-                onSelect={setSelected}
+                onSelect={onSelect}
               />
             ))}
           </div>
