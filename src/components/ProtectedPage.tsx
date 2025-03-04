@@ -14,7 +14,7 @@ export default function ProtectedPage({ children }: ProtectedPageProps) {
 
   useEffect(() => {
     if (!isLoading && !user) {
-      router.replace("/auth/login"); // Redirect to login if not authenticated
+      router.replace("/"); // Redirect to login if not authenticated
     }
   }, [user, isLoading, router]);
 

@@ -11,9 +11,11 @@ export const metadata: Metadata = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="flex flex-col items-center justify-between min-h-screen w-full max-w-md mx-auto">
-        <div className="flex-grow w-full px-4 py-6">{children}</div>
-        <Navbar />
+      <body className="flex flex-col items-center min-h-screen w-full max-w-md mx-auto">
+        <div className="flex-grow w-full px-4 py-6 pb-20">{children}</div>
+        <div className="fixed bottom-0 w-full max-w-md bg-white border-t">
+          <Navbar />
+        </div>
       </body>
     </html>
   );
