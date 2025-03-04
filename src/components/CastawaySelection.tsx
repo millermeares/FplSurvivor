@@ -12,10 +12,12 @@ interface Castaway {
   name: string;
   image_url: string | null;
 }
+
 export default function CastawaySelection() {
   const [castaways, setCastaways] = useState<Castaway[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchCastaways = async () => {
@@ -34,30 +36,33 @@ export default function CastawaySelection() {
     fetchCastaways();
   }, []);
 
+  const onSelect = async (id: string) => {
+    if (submitting || selected === id) return; // Prevent multiple rapid selections
 
-  // todo: test what happens when you click a bunch of stuff rapidly. 
-  const onSelect = (id: string) => {
-    const setSelectionInDb = async () => {
-      try {
-        const response = await axios.post("/api/proxy", {
-          path: "setSelections",
-          body: {
-            week: WEEK_ID,
-            castaways: [{
+    setSubmitting(true);
+    try {
+      const res = await axios.post("/api/proxy", {
+        path: "setSelections",
+        body: {
+          week: WEEK_ID,
+          castaways: [
+            {
               castawayId: id,
-              isCaptain: false
-            }]
-          }
-        })
-        console.log(response)
-        // todo: if successful, set the color of the selected row to green?
-      } catch (error) {
-        console.error("Error setting castaway", error) // todo: handle
-      } 
+              isCaptain: false,
+            },
+          ],
+        },
+      });
+      console.log(res)
+
+      setSelected(id);
+    } catch (error) {
+      console.error("Error setting castaway", error);
+      // TODO: Handle error state (e.g., show an error message to the user)
+    } finally {
+      setSubmitting(false);
     }
-    setSelectionInDb()
-    setSelected(id)
-  }
+  };
 
   return (
     <ProtectedPage>
@@ -78,7 +83,7 @@ export default function CastawaySelection() {
                 name={castaway.name}
                 imageUrl={castaway.image_url}
                 isSelected={selected === castaway.id}
-                onSelect={onSelect}
+                onSelect={submitting ? undefined : () => onSelect(castaway.id)} // Disable while submitting
               />
             ))}
           </div>
