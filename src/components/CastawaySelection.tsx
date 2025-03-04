@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ProtectedPage from "./ProtectedPage";
 import CastawaySelectionRow from "./CastawaySelectionRow";
 
+const WEEK_ID = 2
 interface Castaway {
   id: string;
   name: string;
@@ -41,7 +42,7 @@ export default function CastawaySelection() {
         const response = await axios.post("/api/proxy", {
           path: "setSelections",
           body: {
-            week: 2,
+            week: WEEK_ID,
             castaways: [{
               castawayId: id,
               isCaptain: false
@@ -61,7 +62,7 @@ export default function CastawaySelection() {
   return (
     <ProtectedPage>
       <div className="max-w-md mx-auto space-y-2">
-        <h2 className="text-lg font-semibold text-center">Select a Castaway</h2>
+        <h2 className="text-lg font-semibold text-center">Select a Castaway (Week {WEEK_ID})</h2>
         {loading ? (
           <div className="space-y-2">
             {[...Array(8)].map((_, i) => (
