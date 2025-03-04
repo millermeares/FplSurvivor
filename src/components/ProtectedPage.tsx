@@ -19,7 +19,12 @@ export default function ProtectedPage({ children }: ProtectedPageProps) {
   }, [user, isLoading, router]);
 
   if (isLoading) return <p className="text-center">Loading...</p>;
-  if (!user) return null; // Prevent content from flashing before redirect
-
+  if (!user) {
+    return (
+      <a href="/auth/login" className="flex items-center gap-2">
+        <span className="font-medium">Log in to your account</span>
+      </a>
+    )
+  }
   return <>{children}</>;
 }
