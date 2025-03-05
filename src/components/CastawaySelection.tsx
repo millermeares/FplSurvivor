@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProtectedPage from "./ProtectedPage";
 import CastawaySelectionRow from "./CastawaySelectionRow";
@@ -34,6 +34,12 @@ export default function CastawaySelection() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
+  function getCastawaysFromApiResponseBackwardsCompatible(response: AxiosResponse<any, any>) {
+    if (response.data.castaways) {
+      return response.data.castaways
+    }
+    return response.data
+  }
   useEffect(() => {
     const fetchCastaways = async () => {
       try {
@@ -44,8 +50,10 @@ export default function CastawaySelection() {
           }
         });
         console.log(response)
-        const selectedCastaways = getSelectedCastawayIds(response.data)
-        setCastaways(response.data);
+        
+        const castawaysFromResponse = getCastawaysFromApiResponseBackwardsCompatible(response)
+        const selectedCastaways = getSelectedCastawayIds(castawaysFromResponse)
+        setCastaways(castawaysFromResponse);
         setSelected(selectedCastaways[0])
       } catch (error) {
         console.error("Error fetching castaways:", error);
