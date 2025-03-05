@@ -11,7 +11,7 @@ export default function AccountPage() {
   return (
     <ProtectedPage>
       <div className="text-center">
-        <h2 className="text-lg font-semibold">{user?.name ?? "Unknown User"}</h2>
+        <h2 className="text-lg font-semibold">Welcome {user?.name ?? "Unknown User"}</h2>
         <div className="mt-4">
           <Rules />
         </div>

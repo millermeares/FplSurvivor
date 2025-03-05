@@ -4,6 +4,7 @@ import { useState } from "react";
 import axios from "axios";
 import CastawaySelectionRow from "./CastawaySelectionRow";
 import { CastawayWithSelection, Week } from "./CastawayView";
+import Link from 'next/link'
 
 export interface CastawaySelectionProps {
   castaways: CastawayWithSelection[];
@@ -35,10 +36,13 @@ export default function CastawaySelection({ castaways, week }: CastawaySelection
       setSubmitting(false);
     }
   };
+  const rulesLink = (
+    <Link href="/account" className="text-blue-500 hover:underline">scoring</Link>
+  )
 
   return (
     <div className="max-w-md mx-auto space-y-2">
-      <h2 className="text-lg font-semibold text-center">Select a Castaway (Week {week.episode_number})</h2>
+      <h2 className="text-lg font-semibold text-center">Select a Castaway for Week {week.episode_number} ({rulesLink})</h2>
       <div className="space-y-1 overflow-auto">
         {castaways.map((castaway) => (
           <CastawaySelectionRow
