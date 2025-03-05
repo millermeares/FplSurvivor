@@ -7,13 +7,19 @@ import ProtectedPage from "./ProtectedPage";
 import CastawaySelectionRow from "./CastawaySelectionRow";
 
 const WEEK_ID = 2
-interface Castaway {
+export interface Week {
+  episode_number: number,
+  season: number,
+  lock_time: string // timestamp
+}
+
+export interface Castaway {
   id: string;
   name: string;
   image_url: string | null;
 }
 
-interface CastawayWithSelection extends Castaway {
+export interface CastawayWithSelection extends Castaway {
   _fk_week_eliminated: number | null;
   selection_id: string | null;
   is_captain: boolean | null;
