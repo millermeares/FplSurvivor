@@ -26,8 +26,17 @@ export async function POST(req: Request) {
       body: JSON.stringify(body || {}), // Ensure a valid request body
     });
 
-    const data = await response.json();
-    return NextResponse.json(data, { status: response.status });
+    try {
+      const data = await response.json();
+      return NextResponse.json(data, { status: response.status });
+    } catch (error) {
+      console.error(error)
+      console.log(await response.text())
+      const text = await response.text()
+      return NextResponse.json({
+        message: text,
+      }, { status: response.status })
+    }
   } catch (error) {
     console.error(error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
