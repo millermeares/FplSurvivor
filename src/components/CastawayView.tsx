@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import CastawaySelection from "./CastawaySelection";
 import LockedCastaway from "./LockedCastaway";
 import ProtectedPage from "./ProtectedPage";
@@ -27,12 +27,6 @@ export interface CastawayWithSelection extends Castaway {
   is_captain: boolean | null;
   created_at: string | null;
   removed_at: string | null;
-}
-
-function getSelectedCastawayIds(castaways: CastawayWithSelection[]): string[] {
-  return castaways
-    .filter((castaway) => castaway.selection_id !== null)
-    .map((castaway) => castaway.id);
 }
 
 export default function CastawayView() {
