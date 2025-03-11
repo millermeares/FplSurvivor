@@ -1,6 +1,6 @@
 "use client";
 
-import { CastawayWithSelection, Week } from "./CastawayView";
+import { CastawayWithSelection, Week } from "../CastawayView";
 
 export default function LockedCastaway({ week, castaways }: { week: Week, castaways: CastawayWithSelection[]}) {
   const selectedCastaways = castaways.filter(castaway => castaway.selection_id != null)

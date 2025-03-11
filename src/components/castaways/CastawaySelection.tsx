@@ -3,7 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import CastawaySelectionRow from "./CastawaySelectionRow";
-import { CastawayWithSelection, Week } from "./CastawayView";
+import { CastawayWithSelection, Week } from "../CastawayView";
 import Link from 'next/link'
 
 export interface CastawaySelectionProps {
