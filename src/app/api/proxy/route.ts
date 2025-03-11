@@ -11,6 +11,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing API path" }, { status: 400 });
     }
 
+    // const accessToken = await auth0.getSession()
     const session = await auth0.getSession()
     if (!session || !session.tokenSet.accessToken) {
       return NextResponse.json({error: "Missing logged in user"}, { status: 401 })

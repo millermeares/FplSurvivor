@@ -1,9 +1,8 @@
 import ProtectedPage from "@/components/ProtectedPage";
+import StatsView from "@/components/StatsView";
 
 export default function StatsPage() {
   return (
-    <ProtectedPage>
-        <p className="text-center text-gray-500">Coming Soon: Stats</p>
-    </ProtectedPage>
+    <StatsView />
   )
 }
