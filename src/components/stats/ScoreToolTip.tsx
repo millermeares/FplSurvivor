@@ -1,8 +1,6 @@
 "use client";
 
-import { CastawayEventsWithScoring } from "../StatsView";
 import React from "react";
-import { Card } from "@/components/ui/card";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 
 // todo: do a mapping of db event_type keys to the human readable version

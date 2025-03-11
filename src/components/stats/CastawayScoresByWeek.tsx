@@ -3,10 +3,9 @@
 import { CastawayEventsWithScoring } from "../StatsView";
 import React from "react";
 import { Card } from "@/components/ui/card";
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import ScoreToolTip from "./ScoreToolTip";
 
-const calculateWeeklyScores = (data: CastawayEventsWithScoring) => {
+export const calculateWeeklyScores = (data: CastawayEventsWithScoring) => {
   const { events, scoring } = data;
   const scores: Record<string, number> = {};
   const castaways: Record<string, string> = {};
