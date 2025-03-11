@@ -94,5 +94,4 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ castawayEventsWithScori
   );
 };
 
-
 export default StandingsTable;
