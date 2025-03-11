@@ -53,14 +53,12 @@ const calculateStandings = (
     .forEach(([user_id, data]) => {
       standings.push({ user_id, ...data });
     });
-  console.log(weeks)
   const week_nums = Array.from(weeks).map(w => w.split("-")[1]).map(Number)
   return { standings, weeks: week_nums };
 };
 
 const StandingsTable: React.FC<StandingsTableProps> = ({ castawayEventsWithScoring, activeSelections }) => {
   const { standings, weeks } = calculateStandings(castawayEventsWithScoring, activeSelections);
-  console.log(weeks)
   return (
     <Card className="p-4 overflow-x-auto">
       <h2 className="text-sm font-semibold mb-1">Standings</h2>
