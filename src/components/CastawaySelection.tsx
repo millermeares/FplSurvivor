@@ -43,6 +43,9 @@ export default function CastawaySelection({ castaways, week }: CastawaySelection
   return (
     <div className="max-w-md mx-auto space-y-2">
       <h2 className="text-lg font-semibold text-center">Select a Castaway for Week {week.episode_number} ({rulesLink})</h2>
+      <div className="text-center text-green-600 font-medium">
+        {selected && `You have selected ${castaways.find(c => c.id === selected)?.name} for this week.`}
+      </div>
       <div className="space-y-1 overflow-auto">
         {castaways.map((castaway) => (
           <CastawaySelectionRow
