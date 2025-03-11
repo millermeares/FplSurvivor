@@ -10,23 +10,26 @@ const calculateWeeklyScores = (data: CastawayEventsWithScoring) => {
   const scores: Record<string, number> = {};
   const castaways: Record<string, string> = {}
   const weeks: Set<string> = new Set();
+  const totalScores: Record<string, number> = {};
 
   for (const event of events) {
     const { season, episode_number, castaway_id, castaway_name, event_type } = event;
-    // if (!event_type) continue;
     const non_null_event_type = event_type || ''
     const key = `${season}-${episode_number}-${castaway_id}`;
+    const points = scoring[non_null_event_type] || 0;
     scores[key] = (scores[key] || 0) + (scoring[non_null_event_type] || 0);
 
     castaways[castaway_id] = castaway_name;
     weeks.add(`${season}-${episode_number}`);
+
+    totalScores[castaway_id] = (totalScores[castaway_id] || 0) + points;
   }
 
-  return { scores, castaways, weeks: Array.from(weeks).sort() };
+  return { scores, castaways, weeks: Array.from(weeks).sort(), totalScores };
 };
 
 const CastawayScoresByWeek: React.FC<{ data: CastawayEventsWithScoring }> = ({data}) => {
-  const { scores, castaways, weeks } = calculateWeeklyScores(data);
+  const { scores, castaways, weeks, totalScores } = calculateWeeklyScores(data);
 
   return (
     <Card className="p-4 overflow-x-auto">
@@ -38,6 +41,7 @@ const CastawayScoresByWeek: React.FC<{ data: CastawayEventsWithScoring }> = ({da
               {weeks.map((week) => (
                 <th key={week} className="p-2 text-center whitespace-nowrap">W{week.split("-")[1]}</th>
               ))}
+              <th className="p-2 text-center">Total</th>
             </tr>
           </thead>
           <tbody>
@@ -61,6 +65,7 @@ const CastawayScoresByWeek: React.FC<{ data: CastawayEventsWithScoring }> = ({da
                     </td>
                   );
                 })}
+                <td className="p-2 font-bold">{totalScores[castawayId] || 0}</td>
               </tr>
             ))}
           </tbody>
