@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import CastawaySelection from "./CastawaySelection";
-import LockedCastaway from "./LockedCastaway";
 import ProtectedPage from "./ProtectedPage";
 import { Skeleton } from "@/components/ui/skeleton";
 import CastawayScoresByWeek from "./stats/CastawayScoresByWeek";
