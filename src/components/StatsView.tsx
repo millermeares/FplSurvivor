@@ -6,9 +6,10 @@ import CastawaySelection from "./CastawaySelection";
 import LockedCastaway from "./LockedCastaway";
 import ProtectedPage from "./ProtectedPage";
 import { Skeleton } from "@/components/ui/skeleton";
+import CastawayScoresByWeek from "./stats/CastawayScoresByWeek";
 
 
-export interface CastawayEventWithScoring {
+export interface CastawayEventsWithScoring {
   events: CastawayEvent[],
   scoring: Record<string, number>
 }
@@ -23,7 +24,7 @@ export interface CastawayEvent {
 }
 export default function StatsView() {
   const [loading, setLoading] = useState(true);
-  const [castawayEventsWithScoring, setCastawayEventsWithScoring] = useState<CastawayEventWithScoring | null>(null);
+  const [castawayEventsWithScoring, setCastawayEventsWithScoring] = useState<CastawayEventsWithScoring | null>(null);
 
   useEffect(() => {
     const fetchCastaways = async () => {
@@ -58,7 +59,7 @@ export default function StatsView() {
 
   return (
     <ProtectedPage>
-      <div>{castawayEventsWithScoring!!.events.length}</div>
+      <CastawayScoresByWeek data={castawayEventsWithScoring!!} />
     </ProtectedPage>
   );
 }
