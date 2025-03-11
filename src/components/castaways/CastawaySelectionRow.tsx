@@ -11,6 +11,7 @@ interface CastawaySelectionRowProps {
   name: string;
   imageUrl: string | null;
   isSelected: boolean;
+  week_eliminated: number | null;
   onSelect?: (id: string) => void; // Make optional to handle disabled state
 }
 
@@ -24,18 +25,22 @@ export default function CastawaySelectionRow({
   name,
   imageUrl,
   isSelected,
+  week_eliminated,
   onSelect,
 }: CastawaySelectionRowProps) {
   const localImagePath = `/images/castaways/${generateImageName(name)}.jpg`;
+  const isEliminated = week_eliminated !== null;
+  const canSelect = !isEliminated && onSelect;
+
   return (
     <Card
       key={id}
       className={cn(
         "flex items-center gap-3 p-2 cursor-pointer transition-all border border-gray-200 rounded-md",
         isSelected ? "bg-green-200 dark:bg-green-700 border-green-500" : "hover:bg-gray-100 dark:hover:bg-gray-800",
-        !onSelect && "opacity-50 cursor-not-allowed"
+        isEliminated && "opacity-50 cursor-not-allowed border-red-500 line-through text-red-500"
       )}
-      onClick={onSelect ? () => onSelect(id) : undefined}
+      onClick={canSelect ? () => onSelect?.(id) : undefined}
     >
       <div className="flex items-center w-full">
         <Avatar className="w-8 h-8 rounded-full overflow-hidden">
@@ -48,9 +53,12 @@ export default function CastawaySelectionRow({
             }}
           />
         </Avatar>
-        <p className="text-sm font-medium ml-3 whitespace-nowrap">{name}</p>
+        <p className={cn("text-sm font-medium ml-3 whitespace-nowrap", isEliminated && "line-through text-red-500")}>
+          {name}
+        </p>
         {isSelected && <CheckCircle className="w-5 h-5 text-green-600 ml-auto" />} {/* Checkmark when selected */}
       </div>
     </Card>
   );
 }
+

@@ -9,9 +9,11 @@ import Link from 'next/link'
 export interface CastawaySelectionProps {
   castaways: CastawayWithSelection[];
   week: Week;
+  activeSelections: CastawayWithSelection[]
 }
 
-export default function CastawaySelection({ castaways, week }: CastawaySelectionProps) {
+export default function CastawaySelection({ castaways, week, activeSelections }: CastawaySelectionProps) {
+  console.log(activeSelections)
   const [selected, setSelected] = useState<string | null>(
     castaways.find((castaway) => castaway.selection_id !== null)?.id || null
   );
@@ -55,6 +57,7 @@ export default function CastawaySelection({ castaways, week }: CastawaySelection
             imageUrl={castaway.image_url}
             isSelected={selected === castaway.id}
             onSelect={submitting ? undefined : () => onSelect(castaway.id)}
+            week_eliminated={castaway._fk_week_eliminated}
           />
         ))}
       </div>

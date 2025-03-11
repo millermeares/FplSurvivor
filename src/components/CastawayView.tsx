@@ -7,7 +7,7 @@ import LockedCastaway from "./castaways/LockedCastaway";
 import ProtectedPage from "./ProtectedPage";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const WEEK_ID = 3;
+const CURRENT_WEEK_ID = 3;
 
 export interface Week {
   episode_number: string; // Updated to string since it's in timestamp format
@@ -31,20 +31,26 @@ export interface CastawayWithSelection extends Castaway {
 
 export default function CastawayView() {
   const [castaways, setCastaways] = useState<CastawayWithSelection[]>([]);
+  const [activeSelections, setActiveSelections] = useState<CastawayWithSelection[]>([])
   const [week, setWeek] = useState<Week | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCastaways = async () => {
-      console.log("Fetching castaways in CastawayView");
       try {
         const response = await axios.post("/api/proxy", {
           path: "castawaysWithSelections",
-          body: { week: WEEK_ID },
+          body: { week: CURRENT_WEEK_ID },
         });
 
-        setCastaways(response.data.castaways);
-        setWeek(response.data.week);
+        const [castawaysResponse, selectionsResponse] = await Promise.all([
+          axios.post("/api/proxy", { path: "castawaysWithSelections", body: { week: CURRENT_WEEK_ID } }),
+          axios.post("/api/proxy", { path: "selectionsForUser" }),
+        ]);
+
+        setCastaways(castawaysResponse.data.castaways);
+        setWeek(castawaysResponse.data.week);
+        setActiveSelections(selectionsResponse.data)
       } catch (error) {
         console.error("Error fetching castaways:", error);
       } finally {
@@ -75,7 +81,7 @@ export default function CastawayView() {
       {isLocked ? (
         <LockedCastaway castaways={castaways} week={week!!} />
       ) : (
-        <CastawaySelection castaways={castaways} week={week!!} />
+        <CastawaySelection castaways={castaways} week={week!!} activeSelections={activeSelections} />
       )}
     </ProtectedPage>
   );
