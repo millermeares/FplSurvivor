@@ -2,42 +2,17 @@
 
 import React from "react";
 import { Card } from "@/components/ui/card";
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { CastawayEventsWithScoring } from "../StatsView";
 import { SelectionResponse } from "../StandingsView";
 import { calculateWeeklyScores } from "../stats/CastawayScoresByWeek";
+import SelectionToolTip from "./StandingsToolTip";
 
 interface StandingsTableProps {
   castawayEventsWithScoring: CastawayEventsWithScoring;
   activeSelections: SelectionResponse[];
 }
 
-interface SelectionTooltipProps {
-  score: number;
-  selections: string[];
-}
 
-const SelectionTooltip: React.FC<SelectionTooltipProps> = ({ score, selections }) => (
-  <TooltipProvider>
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <span className="font-medium cursor-pointer">{score}</span>
-      </TooltipTrigger>
-      <TooltipContent className="text-sm p-2">
-        <p className="font-semibold">Selections:</p>
-        {selections.length > 0 ? (
-          <ul className="mt-1">
-            {selections.map((selection, index) => (
-              <li key={index} className="text-gray-600">• {selection}</li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">No selections</p>
-        )}
-      </TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
-);
 
 const calculateStandings = (
   castawayEventsWithScoring: CastawayEventsWithScoring,
@@ -106,7 +81,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ castawayEventsWithScori
                 <td className="px-2 py-1 text-left font-medium">{user_name}</td>
                 {weeks.map((week) => (
                   <td key={`${user_id}-${week}`} className="px-2 py-1">
-                    <SelectionTooltip score={weekly_scores[week] || 0} selections={selections[week] || []} />
+                    <SelectionToolTip score={weekly_scores[week] || 0} selections={selections[week] || []} />
                   </td>
                 ))}
                 <td className="px-2 py-1 font-bold">{total}</td>
