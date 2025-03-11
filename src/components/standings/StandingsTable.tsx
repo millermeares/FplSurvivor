@@ -50,7 +50,6 @@ const calculateStandings = (
   activeSelections.forEach((selection) => {
     const season = 48; // Assuming season is fixed for now
     const key = `${season}-${selection._fk_week_id}-${selection.castaway_id}`;
-    const weekKey = `${season}-${selection._fk_week_id}`;
     const points = scores[key] || 0;
     const castawayName = castaways[selection.castaway_id]!!
     const finalPoints = selection.is_captain ? points * 2 : points; // Captains get double points
