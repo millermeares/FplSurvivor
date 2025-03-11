@@ -38,11 +38,6 @@ export default function CastawayView() {
   useEffect(() => {
     const fetchCastaways = async () => {
       try {
-        const response = await axios.post("/api/proxy", {
-          path: "castawaysWithSelections",
-          body: { week: CURRENT_WEEK_ID },
-        });
-
         const [castawaysResponse, selectionsResponse] = await Promise.all([
           axios.post("/api/proxy", { path: "castawaysWithSelections", body: { week: CURRENT_WEEK_ID } }),
           axios.post("/api/proxy", { path: "selectionsForUser" }),
