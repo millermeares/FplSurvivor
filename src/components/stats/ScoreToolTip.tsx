@@ -10,12 +10,13 @@ interface ScoreTooltipProps {
 
 const ScoreToolTip: React.FC<ScoreTooltipProps> = ({ score, events }) => {
   const [open, setOpen] = useState(false);
+
   return (
     <TooltipProvider delayDuration={200}>
       <Tooltip open={open} onOpenChange={setOpen}>
         <TooltipTrigger asChild>
           <span
-            className="font-medium cursor-pointer"
+            className="font-medium cursor-pointer underline decoration-dotted hover:bg-gray-100 px-1 rounded transition"
             onClick={(e) => {
               e.stopPropagation(); // Prevents closing immediately
               setOpen((prev) => !prev);
@@ -24,7 +25,7 @@ const ScoreToolTip: React.FC<ScoreTooltipProps> = ({ score, events }) => {
             {score}
           </span>
         </TooltipTrigger>
-        {open && ( // Ensure tooltip content only renders when open
+        {open && (
           <TooltipContent className="text-sm p-2">
             <p className="font-semibold">Total: {score}</p>
             {events.length > 0 ? (

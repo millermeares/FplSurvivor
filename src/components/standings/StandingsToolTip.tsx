@@ -16,7 +16,7 @@ const SelectionToolTip: React.FC<SelectionTooltipProps> = ({ score, selections }
       <Tooltip open={open} onOpenChange={setOpen}>
         <TooltipTrigger asChild>
           <span
-            className="font-medium cursor-pointer"
+            className="font-medium cursor-pointer underline decoration-dotted hover:bg-gray-100 px-1 rounded transition"
             onClick={(e) => {
               e.stopPropagation(); // Prevents immediate closing
               setOpen((prev) => !prev);
@@ -25,7 +25,7 @@ const SelectionToolTip: React.FC<SelectionTooltipProps> = ({ score, selections }
             {score}
           </span>
         </TooltipTrigger>
-        {open && ( // Only render content when open
+        {open && (
           <TooltipContent className="text-sm p-2">
             <p className="font-semibold">Selections:</p>
             {selections.length > 0 ? (
