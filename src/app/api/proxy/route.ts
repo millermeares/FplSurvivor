@@ -16,29 +16,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing API path" }, { status: 400 });
     }
 
-    const maybe_expired_session = await auth0.getSession()
-    if (maybe_expired_session) {
-      if (isExpired(maybe_expired_session.tokenSet.expiresAt)) {
-        await auth0.updateSession({
-          ...maybe_expired_session,
-          updatedAt: Date.now(),
-        })
-      }
-    }
-
-    const session = await auth0.getSession()
-    if (!session || !session.tokenSet.accessToken) {
-      return NextResponse.json({error: "Missing logged in user"}, { status: 401 })
-    }
-
-    console.log(session)
-    const accessToken = session.tokenSet.accessToken
+    const accessToken = await auth0.getAccessToken()
+    console.log(`Access token expires at ${accessToken.expiresAt}`)
     const response = await fetch(`${API_GATEWAY_BASE_URL}/${path}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-api-key": process.env.API_GW_KEY as string, // Securely use API key
-        "Authorization": `Bearer ${accessToken}`,
+        "Authorization": `Bearer ${accessToken.token}`,
       },
       body: JSON.stringify(body || {}), // Ensure a valid request body
     });

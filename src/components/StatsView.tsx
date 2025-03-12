@@ -30,7 +30,6 @@ export default function StatsView() {
         const response = await axios.post("/api/proxy", {
           path: "eventsWithScoring",
         });
-        console.log(response.data)
         setCastawayEventsWithScoring(response.data)
       } catch (error) {
         console.error("Error fetching castaway events:", error);
