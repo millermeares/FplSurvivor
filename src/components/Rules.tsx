@@ -25,17 +25,14 @@ export default function Rules() {
           <div>
             <h2 className="text-lg font-semibold">Player Selection</h2>
             <p className="text-sm">
-              Each week, you will select one player. In future weeks, you will have the opportunity to choose a new player.
+              Each week, you will select one castaway. In future weeks, you will have the opportunity to choose a new castaway.
             </p>
           </div>
           <Separator />
           <div>
             <h2 className="text-lg font-semibold">Loyalty Bonus</h2>
             <p className="text-sm">
-              A loyalty multiplier applies to your weekly score based on consecutive weeks choosing the same player:
-            </p>
-            <p className="text-sm italic">
-              Example: After picking the same player for 5 consecutive weeks, your weekly score is multiplied by 1.5x.
+              If you pick the same castaway for 3 consecutive weeks, you will earn 1 bonus point.
             </p>
           </div>
         </div>
