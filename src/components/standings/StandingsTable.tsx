@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { CastawayEventsWithScoring } from "../StatsView";
 import { SelectionResponse } from "../StandingsView";
 import { calculateWeeklyScores } from "../stats/CastawayScoresByWeek";
-import SelectionToolTip from "./StandingsToolTip";
+import TooltipDisplay from "../TooltipDisplay";
 
 interface StandingsTableProps {
   castawayEventsWithScoring: CastawayEventsWithScoring;
@@ -79,7 +79,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ castawayEventsWithScori
                 <td className="px-2 py-1 text-left font-medium">{user_name}</td>
                 {weeks.map((week) => (
                   <td key={`${user_id}-${week}`} className="px-2 py-1">
-                    <SelectionToolTip score={weekly_scores[week] || 0} selections={selections[week] || []} />
+                    <TooltipDisplay score={weekly_scores[week] || 0} title="Selections:" items={selections[week] || []} emptyMessage="No selections" />
                   </td>
                 ))}
                 <td className="px-2 py-1 font-bold">{total}</td>

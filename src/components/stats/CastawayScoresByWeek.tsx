@@ -3,7 +3,7 @@
 import { CastawayEventsWithScoring } from "../StatsView";
 import React from "react";
 import { Card } from "@/components/ui/card";
-import ScoreToolTip from "./ScoreToolTip";
+import TooltipDisplay from "../TooltipDisplay";
 
 export const calculateWeeklyScores = (data: CastawayEventsWithScoring) => {
   const { events, scoring } = data;
@@ -63,7 +63,7 @@ const CastawayScoresByWeek: React.FC<{ data: CastawayEventsWithScoring }> = ({ d
 
                   return (
                     <td key={key} className="p-2">
-                      <ScoreToolTip score={score} events={events} />
+                      <TooltipDisplay score={score} title={`Total: ${score}`} items={events} emptyMessage="No events" />
                     </td>
                   );
                 })}

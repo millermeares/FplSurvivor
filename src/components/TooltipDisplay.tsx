@@ -3,12 +3,14 @@
 import React, { useState } from "react";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 
-interface ScoreTooltipProps {
+interface TooltipDisplayProps {
   score: number;
-  events: string[];
+  title: string;
+  items: string[];
+  emptyMessage: string;
 }
 
-const ScoreToolTip: React.FC<ScoreTooltipProps> = ({ score, events }) => {
+const TooltipDisplay: React.FC<TooltipDisplayProps> = ({ score, title, items, emptyMessage }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -27,15 +29,15 @@ const ScoreToolTip: React.FC<ScoreTooltipProps> = ({ score, events }) => {
         </TooltipTrigger>
         {open && (
           <TooltipContent className="text-sm p-2">
-            <p className="font-semibold">Total: {score}</p>
-            {events.length > 0 ? (
+            <p className="font-semibold">{title}</p>
+            {items.length > 0 ? (
               <ul className="mt-1">
-                {events.map((event, index) => (
-                  <li key={index} className="text-gray-600">• {event}</li>
+                {items.map((item, index) => (
+                  <li key={index} className="text-gray-600">• {item}</li>
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-500">No events</p>
+              <p className="text-gray-500">{emptyMessage}</p>
             )}
           </TooltipContent>
         )}
@@ -44,4 +46,4 @@ const ScoreToolTip: React.FC<ScoreTooltipProps> = ({ score, events }) => {
   );
 };
 
-export default ScoreToolTip;
+export default TooltipDisplay;

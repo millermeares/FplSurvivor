@@ -3,11 +3,6 @@ import { auth0 } from "@/lib/auth0";
 
 const API_GATEWAY_BASE_URL = "https://x3araf0ma6.execute-api.us-east-2.amazonaws.com/prod";
 
-function isExpired(expiresAt: number): boolean {
-  const currentTime = Math.floor(Date.now() / 1000); // Convert current time to seconds
-  return expiresAt < currentTime + 60; // Consider expired if within the next minute
-}
-
 export async function POST(req: Request) {
   try {
     const { path, body } = await req.json(); // Extract API path & request body
