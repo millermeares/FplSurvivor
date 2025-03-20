@@ -7,7 +7,7 @@ import LockedCastaway from "./castaways/LockedCastaway";
 import ProtectedPage from "./ProtectedPage";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const CURRENT_WEEK_ID = 5;
+const CURRENT_WEEK_ID = 4;
 
 export interface Week {
   episode_number: string; // Updated to string since it's in timestamp format
