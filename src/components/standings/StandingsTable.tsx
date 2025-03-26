@@ -12,48 +12,67 @@ interface StandingsTableProps {
   activeSelections: SelectionResponse[];
 }
 
-const calculateStandings = (
-  castawayEventsWithScoring: CastawayEventsWithScoring,
-  activeSelections: SelectionResponse[]
+const SEASON = 48;
+const LOYALTY_STREAK_MIN = 3;
+
+type UserStanding = {
+  user_name: string;
+  weekly_scores: Record<number, number>;
+  total: number;
+  selections: Record<number, string[]>;
+};
+
+const updateUserScoresAndSelections = (
+  selection: SelectionResponse,
+  users: Record<string, UserStanding>,
+  userWeeklyCastawayIds: Record<string, Record<number, string[]>>,
+  scores: Record<string, number>,
+  castaways: Record<string, string>
 ) => {
-  const standings: { user_id: string; user_name: string; weekly_scores: Record<number, number>; total: number; selections: Record<number, string[]> }[] = [];
-  const { scores, castaways, weeks } = calculateWeeklyScores(castawayEventsWithScoring);
-  const users: Record<string, { user_name: string; weekly_scores: Record<number, number>; total: number; selections: Record<number, string[]> }> = {};
-  const userWeeklyCastawayIds: Record<string, Record<number, string[]>> = {};
+  const { user_id, user_name, _fk_week_id, castaway_id, is_captain } = selection;
+  const key = `${SEASON}-${_fk_week_id}-${castaway_id}`;
+  const points = scores[key] || 0;
+  const finalPoints = is_captain ? points * 2 : points;
+  const castawayName = castaways[castaway_id] || "Unknown";
 
-  activeSelections.forEach((selection) => {
-    const season = 48;
-    const key = `${season}-${selection._fk_week_id}-${selection.castaway_id}`;
-    const points = scores[key] || 0;
-    const castawayName = castaways[selection.castaway_id]!!;
-    const finalPoints = selection.is_captain ? points * 2 : points;
+  if (!users[user_id]) {
+    users[user_id] = {
+      user_name,
+      weekly_scores: {},
+      total: 0,
+      selections: {},
+    };
+  }
+  users[user_id].weekly_scores[_fk_week_id] =
+    (users[user_id].weekly_scores[_fk_week_id] || 0) + finalPoints;
 
-    if (!users[selection.user_id]) {
-      users[selection.user_id] = { user_name: selection.user_name, weekly_scores: {}, total: 0, selections: {} };
-      userWeeklyCastawayIds[selection.user_id] = {};
-    }
+  users[user_id].total += finalPoints;
 
-    if (!userWeeklyCastawayIds[selection.user_id][selection._fk_week_id]) {
-      userWeeklyCastawayIds[selection.user_id][selection._fk_week_id] = [];
-    }
-    userWeeklyCastawayIds[selection.user_id][selection._fk_week_id].push(selection.castaway_id);
+  if (!users[user_id].selections[_fk_week_id]) {
+    users[user_id].selections[_fk_week_id] = [];
+  }
+  users[user_id].selections[_fk_week_id].push(
+    `${castawayName}${is_captain ? " (C)" : ""}`
+  );
 
-    users[selection.user_id].weekly_scores[selection._fk_week_id] =
-      (users[selection.user_id].weekly_scores[selection._fk_week_id] || 0) + finalPoints;
+  if (!userWeeklyCastawayIds[user_id]) {
+    userWeeklyCastawayIds[user_id] = {};
+  }
+  if (!userWeeklyCastawayIds[user_id][_fk_week_id]) {
+    userWeeklyCastawayIds[user_id][_fk_week_id] = [];
+  }
+  userWeeklyCastawayIds[user_id][_fk_week_id].push(castaway_id);
+};
 
-    users[selection.user_id].total += finalPoints;
-
-    if (!users[selection.user_id].selections[selection._fk_week_id]) {
-      users[selection.user_id].selections[selection._fk_week_id] = [];
-    }
-    users[selection.user_id].selections[selection._fk_week_id].push(`${castawayName}${selection.is_captain ? " (C)" : ""}`);
-  });
-
-  // Add LOYALTY_BONUS
+const applyLoyaltyBonuses = (
+  users: Record<string, UserStanding>,
+  userWeeklyCastawayIds: Record<string, Record<number, string[]>>
+) => {
   Object.entries(userWeeklyCastawayIds).forEach(([user_id, weekToCastaways]) => {
     const weekNums = Object.keys(weekToCastaways).map(Number).sort((a, b) => a - b);
     const castawayWeekMap: Record<string, number[]> = {};
 
+    // Build castaway -> list of weeks they were selected
     for (const week of weekNums) {
       for (const castawayId of weekToCastaways[week]) {
         if (!castawayWeekMap[castawayId]) castawayWeekMap[castawayId] = [];
@@ -61,6 +80,7 @@ const calculateStandings = (
       }
     }
 
+    // Apply loyalty bonuses
     for (const [, selectedWeeks] of Object.entries(castawayWeekMap)) {
       const sortedWeeks = selectedWeeks.sort((a, b) => a - b);
       let streak = 1;
@@ -68,19 +88,24 @@ const calculateStandings = (
       for (let i = 1; i < sortedWeeks.length; i++) {
         if (sortedWeeks[i] === sortedWeeks[i - 1] + 1) {
           streak++;
-          const isEndOfStreak = i === sortedWeeks.length - 1 || sortedWeeks[i + 1] !== sortedWeeks[i] + 1;
-          if (streak >= 3 && isEndOfStreak) {
-            const bonusPoints = Math.floor(streak / 3);
+          const isEndOfStreak =
+            i === sortedWeeks.length - 1 || sortedWeeks[i + 1] !== sortedWeeks[i] + 1;
+          if (streak >= LOYALTY_STREAK_MIN && isEndOfStreak) {
+            const bonusPoints = Math.floor(streak / LOYALTY_STREAK_MIN);
             const bonusWeek = sortedWeeks[i];
 
             users[user_id].total += bonusPoints;
-            users[user_id].weekly_scores[bonusWeek] = (users[user_id].weekly_scores[bonusWeek] || 0) + bonusPoints;
+            users[user_id].weekly_scores[bonusWeek] =
+              (users[user_id].weekly_scores[bonusWeek] || 0) + bonusPoints;
 
             if (!users[user_id].selections[bonusWeek]) {
               users[user_id].selections[bonusWeek] = [];
             }
-            users[user_id].selections[bonusWeek].push(`LOYALTY BONUS: +${bonusPoints}`);
-            streak = 1;
+            users[user_id].selections[bonusWeek].push(
+              `LOYALTY BONUS: +${bonusPoints}`
+            );
+
+            streak = 1; // reset streak after bonus
           }
         } else {
           streak = 1;
@@ -88,14 +113,29 @@ const calculateStandings = (
       }
     }
   });
+};
 
-  Object.entries(users)
+const calculateStandings = (
+  castawayEventsWithScoring: CastawayEventsWithScoring,
+  activeSelections: SelectionResponse[]
+) => {
+  const { scores, castaways, weeks } = calculateWeeklyScores(castawayEventsWithScoring);
+
+  const users: Record<string, UserStanding> = {};
+  const userWeeklyCastawayIds: Record<string, Record<number, string[]>> = {};
+
+  for (const selection of activeSelections) {
+    updateUserScoresAndSelections(selection, users, userWeeklyCastawayIds, scores, castaways);
+  }
+
+  applyLoyaltyBonuses(users, userWeeklyCastawayIds);
+
+  const standings = Object.entries(users)
     .sort(([, a], [, b]) => b.total - a.total)
-    .forEach(([user_id, data]) => {
-      standings.push({ user_id, ...data });
-    });
+    .map(([user_id, data]) => ({ user_id, ...data }));
 
-  const week_nums = Array.from(weeks).map(w => w.split("-")[1]).map(Number);
+  const week_nums = weeks.map((w) => Number(w.split("-")[1]));
+
   return { standings, weeks: week_nums };
 };
 
