@@ -7,8 +7,6 @@ import LockedCastaway from "./castaways/LockedCastaway";
 import ProtectedPage from "./ProtectedPage";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const CURRENT_WEEK_ID = 5;
-
 export interface Week {
   episode_number: string; // Updated to string since it's in timestamp format
   season: number;
@@ -39,7 +37,7 @@ export default function CastawayView() {
     const fetchCastaways = async () => {
       try {
         const [castawaysResponse, selectionsResponse] = await Promise.all([
-          axios.post("/api/proxy", { path: "castawaysWithSelections", body: { week: CURRENT_WEEK_ID } }),
+          axios.post("/api/proxy", { path: "castawaysWithSelections" }),
           axios.post("/api/proxy", { path: "selectionsForUser" }),
         ]);
 
