@@ -61,7 +61,7 @@ const calculateStandings = (
       }
     }
 
-    for (const [castawayId, selectedWeeks] of Object.entries(castawayWeekMap)) {
+    for (const [, selectedWeeks] of Object.entries(castawayWeekMap)) {
       const sortedWeeks = selectedWeeks.sort((a, b) => a - b);
       let streak = 1;
 
