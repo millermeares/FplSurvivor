@@ -12,8 +12,6 @@ interface StandingsTableProps {
   activeSelections: SelectionResponse[];
 }
 
-
-
 const calculateStandings = (
   castawayEventsWithScoring: CastawayEventsWithScoring,
   activeSelections: SelectionResponse[]
@@ -24,7 +22,7 @@ const calculateStandings = (
   const userWeeklyCastawayIds: Record<string, Record<number, string[]>> = {};
 
   activeSelections.forEach((selection) => {
-    const season = 48; // Assuming season is fixed for now
+    const season = 48;
     const key = `${season}-${selection._fk_week_id}-${selection.castaway_id}`;
     const points = scores[key] || 0;
     const castawayName = castaways[selection.castaway_id]!!;
@@ -35,20 +33,16 @@ const calculateStandings = (
       userWeeklyCastawayIds[selection.user_id] = {};
     }
 
-    // Track selection castaway IDs for loyalty bonus
     if (!userWeeklyCastawayIds[selection.user_id][selection._fk_week_id]) {
       userWeeklyCastawayIds[selection.user_id][selection._fk_week_id] = [];
     }
     userWeeklyCastawayIds[selection.user_id][selection._fk_week_id].push(selection.castaway_id);
 
-    // Add points to weekly scores
     users[selection.user_id].weekly_scores[selection._fk_week_id] =
       (users[selection.user_id].weekly_scores[selection._fk_week_id] || 0) + finalPoints;
 
-    // Track total score
     users[selection.user_id].total += finalPoints;
 
-    // Store selection details
     if (!users[selection.user_id].selections[selection._fk_week_id]) {
       users[selection.user_id].selections[selection._fk_week_id] = [];
     }
@@ -58,8 +52,6 @@ const calculateStandings = (
   // Add LOYALTY_BONUS
   Object.entries(userWeeklyCastawayIds).forEach(([user_id, weekToCastaways]) => {
     const weekNums = Object.keys(weekToCastaways).map(Number).sort((a, b) => a - b);
-
-    // Flatten user's weekly selections to a list of [week, castaway_id[]]
     const castawayWeekMap: Record<string, number[]> = {};
 
     for (const week of weekNums) {
@@ -69,21 +61,26 @@ const calculateStandings = (
       }
     }
 
-    // Check for loyalty streaks
     for (const [castawayId, selectedWeeks] of Object.entries(castawayWeekMap)) {
-      // Sort the weeks selected
       const sortedWeeks = selectedWeeks.sort((a, b) => a - b);
-
       let streak = 1;
+
       for (let i = 1; i < sortedWeeks.length; i++) {
         if (sortedWeeks[i] === sortedWeeks[i - 1] + 1) {
           streak++;
-          if (streak >= 3 && (i === sortedWeeks.length - 1 || sortedWeeks[i + 1] !== sortedWeeks[i] + 1)) {
-            // Full streak completed
+          const isEndOfStreak = i === sortedWeeks.length - 1 || sortedWeeks[i + 1] !== sortedWeeks[i] + 1;
+          if (streak >= 3 && isEndOfStreak) {
             const bonusPoints = Math.floor(streak / 3);
+            const bonusWeek = sortedWeeks[i];
+
             users[user_id].total += bonusPoints;
-            users[user_id].weekly_scores[sortedWeeks[i]] = (users[user_id].weekly_scores[sortedWeeks[i]] || 0) + bonusPoints;
-            streak = 1; // reset for future streaks
+            users[user_id].weekly_scores[bonusWeek] = (users[user_id].weekly_scores[bonusWeek] || 0) + bonusPoints;
+
+            if (!users[user_id].selections[bonusWeek]) {
+              users[user_id].selections[bonusWeek] = [];
+            }
+            users[user_id].selections[bonusWeek].push(`LOYALTY BONUS: +${bonusPoints}`);
+            streak = 1;
           }
         } else {
           streak = 1;
@@ -92,7 +89,6 @@ const calculateStandings = (
     }
   });
 
-  // Convert users object into sorted standings array
   Object.entries(users)
     .sort(([, a], [, b]) => b.total - a.total)
     .forEach(([user_id, data]) => {
