@@ -83,37 +83,35 @@ const applyLoyaltyBonuses = (
     // Apply loyalty bonuses
     for (const [, selectedWeeks] of Object.entries(castawayWeekMap)) {
       const sortedWeeks = selectedWeeks.sort((a, b) => a - b);
-      let streak = 1;
+      let streakStartIndex = 0;
 
       for (let i = 1; i < sortedWeeks.length; i++) {
         if (sortedWeeks[i] === sortedWeeks[i - 1] + 1) {
-          streak++;
-          const isEndOfStreak =
-            i === sortedWeeks.length - 1 || sortedWeeks[i + 1] !== sortedWeeks[i] + 1;
-          if (streak >= LOYALTY_STREAK_MIN && isEndOfStreak) {
-            const bonusPoints = Math.floor(streak / LOYALTY_STREAK_MIN);
-            const bonusWeek = sortedWeeks[i];
-
-            users[user_id].total += bonusPoints;
+          const weeksSinceStart = i - streakStartIndex + 1;
+          if (weeksSinceStart % LOYALTY_STREAK_MIN === 0) {
+            const bonusWeek =
+              sortedWeeks[
+                streakStartIndex +
+                  LOYALTY_STREAK_MIN - 1 +
+                  ((weeksSinceStart / LOYALTY_STREAK_MIN - 1) * LOYALTY_STREAK_MIN)
+              ];
+      
+            users[user_id].total += 1;
             users[user_id].weekly_scores[bonusWeek] =
-              (users[user_id].weekly_scores[bonusWeek] || 0) + bonusPoints;
-
+              (users[user_id].weekly_scores[bonusWeek] || 0) + 1;
             if (!users[user_id].selections[bonusWeek]) {
               users[user_id].selections[bonusWeek] = [];
             }
-            users[user_id].selections[bonusWeek].push(
-              `LOYALTY BONUS: +${bonusPoints}`
-            );
-
-            streak = 1; // reset streak after bonus
+            users[user_id].selections[bonusWeek].push("LOYALTY BONUS: +1");
           }
         } else {
-          streak = 1;
+          streakStartIndex = i; // this is what actually controls the bonus logic
         }
-      }
+      }      
     }
   });
 };
+
 
 const calculateStandings = (
   castawayEventsWithScoring: CastawayEventsWithScoring,
