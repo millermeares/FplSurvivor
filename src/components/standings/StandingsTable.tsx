@@ -140,6 +140,8 @@ const calculateStandings = (
 
 const StandingsTable: React.FC<StandingsTableProps> = ({ castawayEventsWithScoring, activeSelections }) => {
   const { standings, weeks } = calculateStandings(castawayEventsWithScoring, activeSelections);
+  const reversedWeeks = [...weeks].reverse(); // Don't mutate original weeks
+
   return (
     <Card className="p-4 overflow-x-auto">
       <h2 className="text-sm font-semibold mb-1">Standings</h2>
@@ -148,22 +150,27 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ castawayEventsWithScori
           <thead>
             <tr className="bg-gray-200 text-gray-700">
               <th className="px-2 py-1 text-left">User</th>
-              {weeks.map((week) => (
+              <th className="px-2 py-1 text-center font-semibold">Total</th>
+              {reversedWeeks.map((week) => (
                 <th key={week} className="px-2 py-1 text-center">W{week}</th>
               ))}
-              <th className="px-2 py-1 text-center font-semibold">Total</th>
             </tr>
           </thead>
           <tbody>
             {standings.map(({ user_id, user_name, weekly_scores, total, selections }) => (
               <tr key={user_id} className="border-t text-center">
                 <td className="px-2 py-1 text-left font-medium">{user_name}</td>
-                {weeks.map((week) => (
+                <td className="px-2 py-1 font-bold">{total}</td>
+                {reversedWeeks.map((week) => (
                   <td key={`${user_id}-${week}`} className="px-2 py-1">
-                    <TooltipDisplay score={weekly_scores[week] || 0} title="Selections:" items={selections[week] || []} emptyMessage="No selections" />
+                    <TooltipDisplay
+                      score={weekly_scores[week] || 0}
+                      title="Selections:"
+                      items={selections[week] || []}
+                      emptyMessage="No selections"
+                    />
                   </td>
                 ))}
-                <td className="px-2 py-1 font-bold">{total}</td>
               </tr>
             ))}
           </tbody>
@@ -172,5 +179,6 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ castawayEventsWithScori
     </Card>
   );
 };
+
 
 export default StandingsTable;

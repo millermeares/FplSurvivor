@@ -38,6 +38,7 @@ export const calculateWeeklyScores = (data: CastawayEventsWithScoring) => {
 
 const CastawayScoresByWeek: React.FC<{ data: CastawayEventsWithScoring }> = ({ data }) => {
   const { scores, castaways, weeks, totalScores, scoreBreakdown } = calculateWeeklyScores(data);
+  const reversedWeeks = [...weeks].reverse(); // Avoid mutating the original weeks
 
   return (
     <Card className="p-4 overflow-x-auto">
@@ -46,28 +47,33 @@ const CastawayScoresByWeek: React.FC<{ data: CastawayEventsWithScoring }> = ({ d
           <thead>
             <tr className="bg-gray-200 text-gray-700 text-sm">
               <th className="p-2 text-left">Castaway</th>
-              {weeks.map((week) => (
+              <th className="p-2 text-center">Total</th>
+              {reversedWeeks.map((week) => (
                 <th key={week} className="p-2 text-center whitespace-nowrap">W{week.split("-")[1]}</th>
               ))}
-              <th className="p-2 text-center">Total</th>
             </tr>
           </thead>
           <tbody>
             {Object.entries(castaways).map(([castawayId, castawayName]) => (
               <tr key={castawayId} className="border-t text-center text-sm">
                 <td className="p-2 text-left font-semibold">{castawayName}</td>
-                {weeks.map((week) => {
+                <td className="p-2 font-bold">{totalScores[castawayId] || 0}</td>
+                {reversedWeeks.map((week) => {
                   const key = `${week}-${castawayId}`;
                   const score = scores[key] || 0;
                   const events = scoreBreakdown[key] || [];
 
                   return (
                     <td key={key} className="p-2">
-                      <TooltipDisplay score={score} title={`Total: ${score}`} items={events} emptyMessage="No events" />
+                      <TooltipDisplay
+                        score={score}
+                        title={`Total: ${score}`}
+                        items={events}
+                        emptyMessage="No events"
+                      />
                     </td>
                   );
                 })}
-                <td className="p-2 font-bold">{totalScores[castawayId] || 0}</td>
               </tr>
             ))}
           </tbody>
