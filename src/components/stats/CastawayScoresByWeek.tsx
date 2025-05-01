@@ -32,7 +32,12 @@ export const calculateWeeklyScores = (data: CastawayEventsWithScoring) => {
     if (non_null_event_type) scoreBreakdown[key].push(`${event_type} (${points > 0 ? '+' : ''}${points})`);
   }
 
-  return { scores, castaways, weeks: Array.from(weeks).sort(), totalScores, scoreBreakdown };
+  const sortedWeeks = Array.from(weeks).sort((a, b) => {
+    const numA = parseInt(a.split('-')[1], 10);
+    const numB = parseInt(b.split('-')[1], 10);
+    return numA - numB;
+  });
+  return { scores, castaways, weeks: sortedWeeks, totalScores, scoreBreakdown };
 };
 
 
