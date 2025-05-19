@@ -19,6 +19,7 @@ export default function Rules() {
               <li>+2 points for winning immunity</li>
               <li>+1 point for each vote towards an exiled player</li>
               <li>-1 point for each vote received</li>
+              <li>+1 point for each jury vote received at Final Tribal Council</li>
             </ul>
           </div>
           <Separator />
