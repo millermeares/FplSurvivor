@@ -12,7 +12,7 @@ interface StandingsTableProps {
   activeSelections: SelectionResponse[];
 }
 
-const SEASON = 48;
+const SEASON = 49;
 const LOYALTY_STREAK_MIN = 3;
 
 type UserStanding = {
