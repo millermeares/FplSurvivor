@@ -7,7 +7,6 @@ import Rules from "@/components/Rules";
 
 export default function AccountPage() {
   const { user } = useUser();
-  console.log(JSON.stringify(user))
   return (
     <ProtectedPage>
       <div className="text-center">
