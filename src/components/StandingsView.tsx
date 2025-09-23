@@ -6,6 +6,7 @@ import ProtectedPage from "./ProtectedPage";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CastawayEventsWithScoring } from "./StatsView";
 import StandingsTable from "./standings/StandingsTable";
+import { alertError } from "@/lib/utils";
 
 export interface SelectionResponse {
   user_id: string;
@@ -22,7 +23,7 @@ export interface SelectionResponse {
 
 export default function StandingsView() {
   const [loading, setLoading] = useState(true);
-  const [castawayEventsWithScoring, setCastawayEventsWithScoring] =useState<CastawayEventsWithScoring | null>(null);
+  const [castawayEventsWithScoring, setCastawayEventsWithScoring] = useState<CastawayEventsWithScoring | null>(null);
   const [activeSelections, setActiveSelections] = useState<SelectionResponse[] | null>(null);
 
   useEffect(() => {
@@ -32,12 +33,25 @@ export default function StandingsView() {
           axios.post("/api/proxy", { path: "eventsWithScoring" }),
           axios.post("/api/proxy", { path: "activeSelections" }),
         ]);
-        setCastawayEventsWithScoring(eventsResponse.data);
-        setActiveSelections(selectionsResponse.data);
+
+        if (
+          eventsResponse.status === 200 &&
+          selectionsResponse.status === 200 &&
+          eventsResponse.data &&
+          selectionsResponse.data
+        ) {
+          setCastawayEventsWithScoring(eventsResponse.data);
+          setActiveSelections(selectionsResponse.data);
+          setLoading(false);
+        } else {
+          alertError();
+          console.error("API responses invalid:", eventsResponse, selectionsResponse);
+          // Keep loading = true, don't update state
+        }
       } catch (error) {
+        alertError();
         console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
+        // Keep loading = true, don't update state
       }
     };
 
@@ -59,9 +73,9 @@ export default function StandingsView() {
   return (
     <ProtectedPage>
       <StandingsTable
-          castawayEventsWithScoring={castawayEventsWithScoring!!}
-          activeSelections={activeSelections!!}
-        />
+        castawayEventsWithScoring={castawayEventsWithScoring!!}
+        activeSelections={activeSelections!!}
+      />
     </ProtectedPage>
-  )
+  );
 }

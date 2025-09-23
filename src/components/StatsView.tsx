@@ -5,6 +5,7 @@ import axios from "axios";
 import ProtectedPage from "./ProtectedPage";
 import { Skeleton } from "@/components/ui/skeleton";
 import CastawayScoresByWeek from "./stats/CastawayScoresByWeek";
+import { alertError } from "@/lib/utils";
 
 
 export interface CastawayEventsWithScoring {
@@ -30,11 +31,18 @@ export default function StatsView() {
         const response = await axios.post("/api/proxy", {
           path: "eventsWithScoring",
         });
-        setCastawayEventsWithScoring(response.data)
+        if (response.status === 200 && response.data) {
+          setCastawayEventsWithScoring(response.data);
+          setLoading(false); // ✅ only clear loading on success
+        } else {
+          alertError();
+          console.error("API response invalid:", response);
+          // Leave loading = true
+        }
       } catch (error) {
+        alertError();
         console.error("Error fetching castaway events:", error);
-      } finally {
-        setLoading(false);
+        // Leave loading = true
       }
     };
 

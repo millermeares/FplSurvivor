@@ -22,7 +22,6 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify(body || {}), // Ensure a valid request body
     });
-
     try {
       const data = await response.json();
       return NextResponse.json(data, { status: response.status });

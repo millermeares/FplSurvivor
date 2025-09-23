@@ -6,6 +6,7 @@ import CastawaySelection from "./castaways/CastawaySelection";
 import LockedCastaway from "./castaways/LockedCastaway";
 import ProtectedPage from "./ProtectedPage";
 import { Skeleton } from "@/components/ui/skeleton";
+import { alertError } from "@/lib/utils";
 
 export interface Week {
   episode_number: string; // Updated to string since it's in timestamp format
@@ -40,17 +41,29 @@ export default function CastawayView() {
           axios.post("/api/proxy", { path: "castawaysWithSelections" }),
           axios.post("/api/proxy", { path: "selectionsForUser" }),
         ]);
-
-        setCastaways(castawaysResponse.data.castaways);
-        setWeek(castawaysResponse.data.week);
-        setActiveSelections(selectionsResponse.data)
+        // Only update state if both requests succeeded
+        if (
+          castawaysResponse.status === 200 &&
+          selectionsResponse.status === 200 &&
+          castawaysResponse.data &&
+          selectionsResponse.data
+        ) {
+          setCastaways(castawaysResponse.data.castaways);
+          setWeek(castawaysResponse.data.week);
+          setActiveSelections(selectionsResponse.data);
+          setLoading(false);
+        } else {
+          // Treat as error
+          alertError()
+          console.error("API responses invalid:", castawaysResponse, selectionsResponse);
+          // Keep loading = true, don't set state
+        }
       } catch (error) {
+        alertError()
         console.error("Error fetching castaways:", error);
-      } finally {
-        setLoading(false);
+        // Keep loading = true, don't set state
       }
     };
-
     fetchCastaways();
   }, []);
 
@@ -65,7 +78,7 @@ export default function CastawayView() {
       </ProtectedPage>
     );
   }
-
+  
   const now = new Date();
   const episodeTime = new Date(week!!.lock_time.replace(" ", "T"))
   const isLocked = now > episodeTime
