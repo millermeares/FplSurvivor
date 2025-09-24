@@ -57,11 +57,22 @@ export default function CastawaySelection({ castaways, week, activeSelections }:
   return (
     <div className="max-w-md mx-auto space-y-2">
       <h2 className="text-lg font-semibold text-center">
-        Select a Castaway for Week {week.episode_number} ({rulesLink})
+        Select a Castaway for Week {week.episode_number} ({rulesLink})  
+        <span className="block text-gray-500 text-sm">
+          Week {week.episode_number} picks lock at {new Date(week.lock_time).toLocaleString()}
+        </span>
       </h2>
-      <div className="text-center text-green-600 font-medium">
-        {selected && `You have selected ${castaways.find(c => c.id === selected)?.name} for this week.`}
+      <div className="text-center font-medium">
+        {selected 
+          ? <span className="text-green-600">
+              You have selected {castaways.find(c => c.id === selected)?.name} for this week.
+            </span>
+          : <span className="text-red-500">
+              You have not selected anyone for this week.
+            </span>
+        }
       </div>
+
       <div className="space-y-1 overflow-auto">
         {castaways.map((castaway) => (
           <CastawaySelectionRow
