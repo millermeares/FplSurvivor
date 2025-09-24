@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -57,25 +58,30 @@ export default function StandingsView() {
 
     fetchData();
   }, []);
-
-  if (loading) {
-    return (
-      <ProtectedPage>
-        <div className="space-y-2">
-          {[...Array(8)].map((_, i) => (
-            <Skeleton key={i} className="h-10 w-full rounded-md" />
-          ))}
-        </div>
-      </ProtectedPage>
-    );
-  }
-
   return (
     <ProtectedPage>
-      <StandingsTable
-        castawayEventsWithScoring={castawayEventsWithScoring!!}
-        activeSelections={activeSelections!!}
-      />
+      <div>Page down for maintenance</div>
     </ProtectedPage>
-  );
+  )
+
+  // if (loading) {
+  //   return (
+  //     <ProtectedPage>
+  //       <div className="space-y-2">
+  //         {[...Array(8)].map((_, i) => (
+  //           <Skeleton key={i} className="h-10 w-full rounded-md" />
+  //         ))}
+  //       </div>
+  //     </ProtectedPage>
+  //   );
+  // }
+
+  // return (
+  //   <ProtectedPage>
+  //     <StandingsTable
+  //       castawayEventsWithScoring={castawayEventsWithScoring!!}
+  //       activeSelections={activeSelections!!}
+  //     />
+  //   </ProtectedPage>
+  // );
 }
