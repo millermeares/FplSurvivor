@@ -33,7 +33,7 @@ const updateUserScoresAndSelections = (
   const key = `${SEASON}-${_fk_week_id}-${castaway_id}`;
   const points = scores[key] || 0;
   const finalPoints = is_captain ? points * 2 : points;
-  const castawayName = castaways[castaway_id] || "Unknown";
+  const castawayName = castaways[castaway_id] || "Selection hidden until lock.";
 
   if (!users[user_id]) {
     users[user_id] = {
